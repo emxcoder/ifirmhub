@@ -22,12 +22,12 @@ class _GlobalInternetListenerState
     return status.when(
       data: (hasInternet) {
         addPost(hasInternet, ref);
-        if (!hasInternet) {
-          Future.delayed(Duration(seconds: 2)).then((value) => Text('Hello'));
-          return widget.child;
-        } else {
-          return widget.child;
-        }
+        return Stack(
+          children: [
+            widget.child,
+            if (!hasInternet) Positioned.fill(child: NoConnectionPage())
+          ],
+        );
       },
       error: (error, stackTrace) {
         return NoConnectionPage();
