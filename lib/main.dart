@@ -17,6 +17,9 @@ class MainApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: routerConfig,
       title: title,
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
         return GlobalInternetListener(
