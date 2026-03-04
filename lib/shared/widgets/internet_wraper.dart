@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ifirmhub/shared/widgets/appbars.dart';
 
 import '../../constants/keys.dart';
 import '../../services/internet/network_provider.dart';
+import 'texts.dart';
 
 class GlobalInternetListener extends ConsumerStatefulWidget {
   final Widget child;
@@ -33,13 +35,46 @@ class _GlobalInternetListenerState
         return NoConnectionPage();
       },
       loading: () {
-        return Container(
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: Image.asset('assets/icon/icon.png').image)),
-            child: Center(child: CircularProgressIndicator()));
+        return Scaffold(
+          appBar: topAppBar,
+          body: Stack(
+            children: [
+              Column(
+                children: [
+                  choosePText,
+                  LinearProgressIndicator(),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: GridView.builder(
+                        itemCount: 10,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                              MediaQuery.of(context).size.width > 600
+                                  ? 4
+                                  : 2, // 2 colunas
+                          crossAxisSpacing: 2,
+                          mainAxisSpacing: 4,
+                        ),
+                        itemBuilder: (context, index) {
+                          return Card();
+                        },
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: false,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          onPressed: () {}, child: Text('Tools and Guide')),
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
       },
     );
   }

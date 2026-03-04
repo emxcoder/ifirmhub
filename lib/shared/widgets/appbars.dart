@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 
-const imageUrl = 'https://i.im.ge/2026/03/05/ebkezC.iFirmIcon-1.png';
+const imageUrlAppBar = 'https://i.im.ge/2026/03/05/ebkezC.iFirmIcon-1.png';
 final topAppBar = AppBar(
-  leading: Image.network(
-    imageUrl,
+  title: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Image.network(
+          width: 40,
+          height: 40,
+          imageUrlAppBar,
+        ),
+      ),
+      const Text('iFirmHub'),
+    ],
   ),
-  title: const Text('iFirmHub'),
   centerTitle: true,
 );
