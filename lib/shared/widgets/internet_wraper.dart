@@ -1,10 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ifirmhub/shared/widgets/appbars.dart';
-
 import '../../constants/keys.dart';
 import '../../services/internet/network_provider.dart';
-import 'texts.dart';
 
 class GlobalInternetListener extends ConsumerStatefulWidget {
   final Widget child;
@@ -17,65 +16,41 @@ class GlobalInternetListener extends ConsumerStatefulWidget {
 
 class _GlobalInternetListenerState
     extends ConsumerState<GlobalInternetListener> {
+  late bool status;
+  late Timer time;
+  int counter = 0;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final status = ref.watch(internetStatusProvider);
+    final internetCheck = ref.watch(internetStatusProvider);
+    bool status = internetCheck.value != null && internetCheck.value == true;
 
-    return status.when(
-      data: (hasInternet) {
-        addPost(hasInternet, ref);
-        return Stack(
-          children: [
-            widget.child,
-            if (!hasInternet) Positioned.fill(child: NoConnectionPage())
-          ],
-        );
-      },
-      error: (error, stackTrace) {
-        return NoConnectionPage();
-      },
-      loading: () {
-        return Scaffold(
-          appBar: topAppBar,
-          body: Stack(
-            children: [
-              Column(
-                children: [
-                  choosePText,
-                  LinearProgressIndicator(),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: GridView.builder(
-                        itemCount: 10,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount:
-                              MediaQuery.of(context).size.width > 600
-                                  ? 4
-                                  : 2, // 2 colunas
-                          crossAxisSpacing: 2,
-                          mainAxisSpacing: 4,
-                        ),
-                        itemBuilder: (context, index) {
-                          return Card();
-                        },
-                      ),
-                    ),
-                  ),
-                  Visibility(
-                    visible: false,
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                          onPressed: () {}, child: Text('Tools and Guide')),
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+    // if (!status) {
+    //   Future.delayed(
+    //     Duration(seconds: 10),
+    //     () {
+    //       setState(() {
+    //         counter = 3;
+    //       });
+    //     },
+    //   );
+    //   addPost(status, ref);
+    // } else {
+    //   // addPost(status, ref);
+    //   setState(() {
+    //     counter = 0;
+    //   });
+    // }
+    return Stack(
+      children: [
+        addPost(status, ref), //
+        widget.child,
+        // if (status) Positioned.fill(child: NoConnectionPage()),
+      ],
     );
   }
 }
@@ -85,6 +60,7 @@ class NoConnectionPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      backgroundColor: Colors.black87.withAlpha(200),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -107,12 +83,13 @@ class NoConnectionPage extends ConsumerWidget {
   }
 }
 
-void addPost(bool hasInternet, WidgetRef ref) {
+Widget addPost(bool hasInternet, WidgetRef ref) {
   !hasInternet
       ? WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           _showBanner(ref);
         })
       : scaffoldMKey.currentState?.clearMaterialBanners();
+  return Visibility(child: Text('Connection...'));
 }
 
 void _showBanner(WidgetRef ref) {

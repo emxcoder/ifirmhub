@@ -23,7 +23,7 @@ class ProductCard extends ConsumerWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             ClipRRect(
               borderRadius: const BorderRadius.vertical(

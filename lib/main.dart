@@ -25,7 +25,7 @@ class MainApp extends StatelessWidget {
         return GlobalInternetListener(
             child: child ??
                 SizedBox(
-                  child: Text('Erro'),
+                  child: Text('Erro, Restast App'),
                 ));
       },
       scaffoldMessengerKey: scaffoldMKey,

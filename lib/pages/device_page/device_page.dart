@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/models/device_model.dart';
 import '../../core/models/products_model.dart';
 import '../../core/providers/device_provider.dart';
+import '../../services/internet/network_provider.dart';
 import '../../shared/widgets/appbars.dart';
 import '../../shared/widgets/texts.dart';
 import 'device_card.dart';
@@ -19,6 +20,8 @@ class DevicePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pOnline = ProductModel(id: '9', name: type, imageUrl: '');
+    final internetCheck = ref.watch(internetStatusProvider);
+    bool status = internetCheck.value != null && internetCheck.value == true;
 
     final productModeltoUse = productModel ?? pOnline;
 
@@ -31,7 +34,7 @@ class DevicePage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               chooseDText,
-              devices.isLoading
+              devices.isLoading || !status
                   ? LinearProgressIndicator()
                   : Visibility(visible: false, child: Text('')),
               devices.when(
@@ -72,13 +75,14 @@ class DevicesView extends ConsumerWidget {
   final ProductModel productModel;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final internetCheck = ref.watch(internetStatusProvider);
+    bool status = internetCheck.value != null && internetCheck.value == true;
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: RefreshIndicator(
           onRefresh: () {
-            final newValue =
-                ref.refresh(devicesProvider(productModel.name).future);
+            final newValue = ref.refresh(internetStatusProvider.future);
             return newValue;
           },
           child: GridView.builder(
@@ -92,6 +96,9 @@ class DevicesView extends ConsumerWidget {
             itemBuilder: (context, index) {
               final deviceModel = devices[index];
 
+              if (!status) {
+                return Card();
+              }
               return DeviceCard(deviceModel: deviceModel);
             },
           ),
