@@ -6,14 +6,15 @@ import 'constants/keys.dart';
 import 'shared/widgets/internet_wraper.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const ProviderScope(child: MainApp()));
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends ConsumerWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp.router(
       routerConfig: routerConfig,
       title: title,
@@ -22,6 +23,7 @@ class MainApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
+        
         return GlobalInternetListener(
             child: child ??
                 SizedBox(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ifirmhub/app/router/routes.dart';
-import 'package:ifirmhub/constants/keys.dart';
+import '../../constants/keys.dart';
+import 'routes.dart';
 
 final routerConfig = GoRouter(
   routes: [homeRoute],

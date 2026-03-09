@@ -8,6 +8,7 @@ class DeviceModel {
   final String platform;
   final int cpid;
   final int bdid;
+  
   String url = '';
   DeviceModel({
     required this.name,
@@ -91,4 +92,7 @@ class DeviceModel {
         cpid.hashCode ^
         bdid.hashCode;
   }
+
+
+
 }

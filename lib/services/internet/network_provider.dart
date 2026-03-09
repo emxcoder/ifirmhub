@@ -13,3 +13,8 @@ final internetStatusProvider = StreamProvider<bool>((ref) {
   final service = ref.watch(networkServiceProvider);
   return service.connectionStream;
 });
+
+final counterProvider = StateProvider<int>((ref) {
+  
+  return 0;
+});

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ifirmhub/services/internet/network_provider.dart';
-import 'package:ifirmhub/shared/widgets/texts.dart';
+import 'package:go_router/go_router.dart';
+import 'package:ifirmhub/core/utils/utils.dart';
+import '../../constants/constants.dart';
 import '../../core/providers/products_provider.dart';
+import '../../services/internet/network_provider.dart';
 import '../../shared/widgets/appbars.dart';
+import '../../shared/widgets/texts.dart';
 import 'product_card.dart';
 
 class HomePage extends ConsumerWidget {
@@ -12,81 +15,88 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final products = ref.watch(productsProvider);
-    final internetCheck = ref.watch(internetStatusProvider);
-    bool status = internetCheck.value != null && internetCheck.value == true;
+    final hasInternet = hasInternetGlobal(ref);
 
     return Scaffold(
-      appBar: !status
-          ? AppBar(
-              title: Text(
-                'iFirmHUB',
-              ),
-              centerTitle: true,
-            )
-          : topAppBar,
-      body: Stack(
+      appBar: topAppBar,
+      body: Column(
         children: [
-          Column(
-            children: [
-              choosePText,
-              if (!status) LinearProgressIndicator(),
-              products.when(
-                data: (products) {
-                  return Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: RefreshIndicator(
-                        onRefresh: () {
-                          return ref.refresh(productsProvider.future);
-                        },
-                        child: GridView.builder(
-                          itemCount: products.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount:
-                                MediaQuery.of(context).size.width > 600
-                                    ? 4
-                                    : 2, // 2 colunas
-                            crossAxisSpacing: 2,
-                            mainAxisSpacing: 4,
-                          ),
-                          itemBuilder: (context, index) {
-                            final product = products[index];
-                            if (!status) {
-                              return Card(
-                                child: Center(
-                                  child: Icon(Icons.devices),
-                                ),
-                              );
+          choosePText,
+          if (!hasInternet || products.isLoading) LinearProgressIndicator(),
+          products.when(
+            data: (products) {
+              return Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: RefreshIndicator(
+                    onRefresh: () {
+                      ref.invalidate(internetStatusProvider);
+                      return ref.refresh(productsProvider.future);
+                    },
+                    child: GridView.builder(
+                      itemCount: products.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: MediaQuery.of(context).size.width > 600
+                            ? 4
+                            : 2, // 2 colunas
+                        crossAxisSpacing: 2,
+                        mainAxisSpacing: 4,
+                      ),
+                      itemBuilder: (context, index) {
+                        final product = products[index];
+                        return InkWell(
+                          onTap: () {
+                            if (!hasInternet) {
+                              counterTryState(ref).state++;
+                              if (counterTry(ref) < 4) {
+                                notificationService.showOffline(context);
+                              }
+                            } else {
+                              counterTryState(ref).state = 0;
+                              context.pushNamed('device_page',
+                                  pathParameters: {'type': product.name},
+                                  extra: product);
                             }
-                            return ProductCard(productModel: product);
                           },
-                        ),
+                          borderRadius: BorderRadius.circular(16),
+                          splashColor: Colors.lightBlue,
+                          focusColor: Colors.amber,
+                          onLongPress: () {},
+                          child: !hasInternet
+                              ? ProductCard2(productModel: product)
+                              : ProductCard(productModel: product),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              );
+            },
+            error: (error, stackTrace) {
+              return Scaffold(
+                body: Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [Text('Erro Loading Products')]),
+                ),
+              );
+            },
+            loading: () {
+              return Scaffold(
+                backgroundColor: Colors.blue.shade600,
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: LinearProgressIndicator(),
                       ),
                     ),
-                  );
-                },
-                error: (error, stackTrace) {
-                  return Center(
-                    child: Text('Erro $error'),
-                  );
-                },
-                loading: () {
-                  return Visibility(
-                    visible: false,
-                    child: Text(''),
-                  );
-                },
-              ),
-              // Visibility(
-              //   visible: true,
-              //   child: SizedBox(
-              //     width: double.infinity,
-              //     child: ElevatedButton(
-              //         onPressed: () {}, child: Text('Tools and Guide')),
-              //   ),
-              // )
-            ],
+                  ],
+                ),
+              );
+            },
           ),
         ],
       ),
