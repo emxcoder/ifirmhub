@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ifirmhub/core/utils/utils.dart';
 import '../../services/internet/network_provider.dart';
+import 'package:open_settings_plus/open_settings_plus.dart';
 
 class GlobalInternetListener extends ConsumerStatefulWidget {
   final Widget child;
@@ -16,13 +17,12 @@ class _GlobalInternetListenerState
     extends ConsumerState<GlobalInternetListener> {
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        if (hasInternetGlobal(ref)) {
-          counterTryState(ref).state = 0;
-        }
-      },
-    );
+    ref.listen(internetStatusProvider, (previous, next) {
+      if (hasInternetGlobal(ref)) {
+        counterTryState(ref).state = 0;
+      }
+    });
+
     return Stack(
       children: [
         widget.child,
@@ -68,7 +68,9 @@ class NoConnectionPage extends ConsumerWidget {
                 child: Text('Tentar novamente'),
               ),
               ElevatedButton.icon(
-                  onPressed: () => ref.refresh(internetStatusProvider.future),
+                  onPressed: () async {
+                    await OpenSettingsPlusAndroid().wifi();
+                  },
                   label: Text('Open Settings'),
                   icon: Icon(Icons.settings)),
             ],
