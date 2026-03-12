@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ifirmhub/app/router/routes.dart';
 import 'package:ifirmhub/constants/constants.dart';
 import 'package:ifirmhub/core/providers/detail_provider.dart';
 import 'package:ifirmhub/core/utils/utils.dart';
@@ -9,6 +10,7 @@ import 'package:ifirmhub/shared/widgets/appbars.dart';
 import '../../core/models/device_model.dart';
 import '../../services/internet/network_provider.dart';
 import 'info_row.dart';
+part 'button_view.dart';
 
 class DeviceDetailsPage extends ConsumerWidget {
   final String identifierRoute;
@@ -170,41 +172,7 @@ class LandscapeStyle extends StatelessWidget {
   }
 }
 
-class FirmwareButton extends ConsumerWidget {
-  const FirmwareButton({
-    super.key,
-    required this.identifier,
-  });
 
-  final String identifier;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return SizedBox(
-      width: double.infinity,
-      height: 55,
-      child: ElevatedButton(
-        onPressed: () {
-          if (!hasInternetGlobal(ref)) {
-            counterTryState(ref).state++;
-            notificationService.showOffline(context);
-          } else {
-            context.push('/firmwares/$identifier');
-          }
-        },
-        style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-        ),
-        child: const Text(
-          'View Firmwares',
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
-    );
-  }
-}
 
 class Header extends StatelessWidget {
   const Header({
