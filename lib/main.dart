@@ -6,6 +6,7 @@ import 'constants/constants.dart';
 import 'constants/keys.dart';
 import 'shared/widgets/internet_wraper.dart';
 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(
@@ -14,6 +15,7 @@ Future<void> main() async {
       ignoreSsl:
           false // option: set to false to disable working with http links (default: false)
       );
+
   runApp(const ProviderScope(child: MainApp()));
 }
 

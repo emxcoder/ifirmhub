@@ -1,9 +1,11 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ifirmhub/core/models/device_model.dart';
 import 'package:ifirmhub/core/models/firmware_model.dart';
 import 'package:ifirmhub/core/providers/firmware_provider.dart';
+import 'package:ifirmhub/services/permissions/permission_service.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/providers/detail_provider.dart';
@@ -52,11 +54,14 @@ class _FirmwarePageState extends ConsumerState<FirmwarePage> {
                     height: 35,
                   ),
                 ),
-                Expanded(child: Text(data.name, style: TextStyle(fontSize: 18),)),
+                Expanded(
+                    child: Text(
+                  data.name,
+                  style: TextStyle(fontSize: 18),
+                )),
               ],
             ),
           ),
-          
           centerTitle: true,
           bottom: const TabBar(
             tabs: [
@@ -93,25 +98,49 @@ class _FirmwarePageState extends ConsumerState<FirmwarePage> {
   }
 }
 
-class FirmwareList extends StatelessWidget {
+class FirmwareList extends StatefulWidget {
   final List<FirmwareModel> firmwares;
 
   const FirmwareList(this.firmwares, {super.key});
 
   @override
+  State<FirmwareList> createState() => _FirmwareListState();
+}
+
+class _FirmwareListState extends State<FirmwareList> {
+  final PermissionService permissions = PermissionService();
+  late final AppLifecycleListener _listener;
+
+  @override
+  void initState() {
+    super.initState();
+    _listener = AppLifecycleListener(
+      onResume: () {
+        permissions.checkStorage();
+      },
+      onPause: () => print("App Paused"),
+      onHide: () => print("App Hidden"),
+      // You can also handle exit requests here
+    );
+  }
+
+  @override
+  void dispose() {
+    _listener.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: firmwares.length,
+      itemCount: widget.firmwares.length,
       itemBuilder: (context, index) {
-        final fw = firmwares[index];
+        final fw = widget.firmwares[index];
 
         return FirmwareCard(
           firmware: fw,
           onDownload: () {
-            context.push(
-              '/download',
-              extra: fw,
-            );
+            permissions.checkStorage();
           },
         );
       },
