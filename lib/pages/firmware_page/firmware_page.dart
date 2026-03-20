@@ -42,6 +42,7 @@ class _FirmwarePageState extends ConsumerState<FirmwarePage> {
               size: 35,
             ),
             data: (data) => Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Hero(
                   tag: deviceModel,
@@ -51,10 +52,11 @@ class _FirmwarePageState extends ConsumerState<FirmwarePage> {
                     height: 35,
                   ),
                 ),
-                Text(data.name),
+                Expanded(child: Text(data.name, style: TextStyle(fontSize: 18),)),
               ],
             ),
           ),
+          
           centerTitle: true,
           bottom: const TabBar(
             tabs: [
@@ -221,9 +223,11 @@ class FirmwareCard extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 10),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(fontSize: 12),
+            ),
           ),
         ],
       ),
