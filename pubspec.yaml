@@ -13,6 +13,7 @@ dependencies:
   dio: ^5.9.2
   flutter:
     sdk: flutter
+  flutter_downloader: ^1.11.8
   flutter_launcher_icons: ^0.14.4
   flutter_local_notifications: ^18.0.1
   flutter_native_splash: ^2.4.0
