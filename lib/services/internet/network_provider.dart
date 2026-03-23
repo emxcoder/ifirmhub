@@ -1,6 +1,7 @@
 // services/internet/network_provider.dart
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart' show StateProvider;
 import 'network_service.dart';
 
 final networkServiceProvider = Provider<NetworkService>((ref) {
@@ -15,6 +16,5 @@ final internetStatusProvider = StreamProvider<bool>((ref) {
 });
 
 final counterProvider = StateProvider<int>((ref) {
-  
   return 0;
 });

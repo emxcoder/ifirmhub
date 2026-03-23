@@ -1,4 +1,4 @@
-import 'dart:ui';
+// ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,10 +13,11 @@ import '../../core/providers/detail_provider.dart';
 class FirmwarePage extends ConsumerStatefulWidget {
   final DeviceModel? deviceModelLocal;
   final String identifierRoute;
-  const FirmwarePage(
-      {super.key,
-      required this.deviceModelLocal,
-      required this.identifierRoute});
+  const FirmwarePage({
+    super.key,
+    required this.deviceModelLocal,
+    required this.identifierRoute,
+  });
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _FirmwarePageState();
@@ -39,26 +40,17 @@ class _FirmwarePageState extends ConsumerState<FirmwarePage> {
         appBar: AppBar(
           title: deviceModel.when(
             error: (error, stackTrace) => Text(nameToUse),
-            loading: () => Icon(
-              Icons.phone_iphone,
-              size: 35,
-            ),
+            loading: () => Icon(Icons.phone_iphone, size: 35),
             data: (data) => Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Hero(
                   tag: deviceModel,
-                  child: Image.network(
-                    data.url,
-                    width: 35,
-                    height: 35,
-                  ),
+                  child: Image.network(data.url, width: 35, height: 35),
                 ),
                 Expanded(
-                    child: Text(
-                  data.name,
-                  style: TextStyle(fontSize: 18),
-                )),
+                  child: Text(data.name, style: TextStyle(fontSize: 18)),
+                ),
               ],
             ),
           ),
@@ -75,10 +67,14 @@ class _FirmwarePageState extends ConsumerState<FirmwarePage> {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(child: Text(e.toString())),
           data: (firmwares) {
-            final signedFirm =
-                firmwares.where((f) => f.signed).map((e) => e).toList();
-            final unsignedFirm =
-                firmwares.where((f) => !f.signed).map((e) => e).toList();
+            final signedFirm = firmwares
+                .where((f) => f.signed)
+                .map((e) => e)
+                .toList();
+            final unsignedFirm = firmwares
+                .where((f) => !f.signed)
+                .map((e) => e)
+                .toList();
 
             return Stack(
               children: [
@@ -161,10 +157,7 @@ class FirmwareCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       shape: RoundedRectangleBorder(
         side: BorderSide(width: 1, color: Colors.blue),
         borderRadius: BorderRadius.circular(14),
@@ -199,7 +192,7 @@ class FirmwareCard extends StatelessWidget {
                 icon: const Icon(Icons.download),
                 label: const Text("Download"),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -210,16 +203,10 @@ class FirmwareCard extends StatelessWidget {
     final Color color = signed ? Colors.green : Colors.red;
     return TextButton.icon(
       onPressed: () {},
-      icon: Icon(
-        signed ? Icons.done : Icons.close,
-        color: color,
-      ),
+      icon: Icon(signed ? Icons.done : Icons.close, color: color),
       label: Text(
         "iOS ${firmware.version}",
-        style: const TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -229,12 +216,7 @@ class FirmwareCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
-          Text(
-            "$label: ",
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          Text("$label: ", style: const TextStyle(fontWeight: FontWeight.w500)),
           Text(value),
         ],
       ),
@@ -246,18 +228,8 @@ class FirmwareCard extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
         children: [
-          Text(
-            "$label: ",
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(fontSize: 12),
-            ),
-          ),
+          Text("$label: ", style: const TextStyle(fontWeight: FontWeight.w500)),
+          Expanded(child: Text(value, style: TextStyle(fontSize: 12))),
         ],
       ),
     );
@@ -307,10 +279,7 @@ class _SignedBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 4,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: signed ? Colors.green : Colors.red,
         borderRadius: BorderRadius.circular(20),
